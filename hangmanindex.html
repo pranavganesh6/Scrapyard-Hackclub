@@ -36,6 +36,11 @@
             font-weight: bold;
             margin-top: 15px;
         }
+        .insult {
+            font-size: 1.2em;
+            color: red;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -48,11 +53,17 @@
 
         <p>Attempts Left: <strong>{{ attempts }}</strong></p>
 
+        {% if message %}
+            <p class="insult">{{ message }}</p> <!-- Displays insult or rage mode text -->
+        {% endif %}
+
         {% if game_over %}
             <p class="message text-danger">{{ final_message }}</p>
-            <p>🔄 Refresh the page to start a new game.</p>
+            <form action="/reset-game" method="POST">
+                <button type="submit" class="btn btn-success">Play Again</button>
+            </form>
         {% else %}
-            <form method="POST" id="guessForm">
+            <form method="POST">
                 <div class="input-group">
                     <input type="text" name="guess" class="form-control" maxlength="1" required>
                     <button type="submit" class="btn btn-primary">Guess</button>
@@ -61,23 +72,7 @@
         {% endif %}
 
         <p><strong>Guessed Letters:</strong> {{ ", ".join(guessed_letters) }}</p>
-
-        <!-- Sound Effects -->
-        <audio id="wrongSound" src="{{ url_for('static', filename='wrong.mp3') }}"></audio>
-        <audio id="correctSound" src="{{ url_for('static', filename='correct.mp3') }}"></audio>
     </div>
-
-    <!-- JavaScript for Playing Sounds -->
-    <script>
-        document.getElementById("guessForm").addEventListener("submit", function(event) {
-            let message = "{{ message }}";  // Get the message from Python
-            if (message.includes("🎉") || message.includes("About time") || message.includes("Finally")) {
-                document.getElementById("correctSound").play();  // Play correct sound
-            } else {
-                document.getElementById("wrongSound").play();  // Play wrong sound
-            }
-        });
-    </script>
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
