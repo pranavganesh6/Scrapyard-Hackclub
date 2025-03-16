@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
 # List of words for the game
-WORDS = ["PYTHON", "FLASK", "DEVELOPER", "HANGMAN", "PROGRAMMING", "OPENAI", "CHALLENGE", "HACKATHON", "HACKCLUB","JAVA", "JAVASCRIPT", "SCRAPYARD", "COMPUTERSCIENCE", "CODING"]
+WORDS = ["PYTHON", "FLASK", "DEVELOPER", "HANGMAN", "PROGRAMMING", "OPENAI", "CHALLENGE", "HACKATHON", "HACKCLUB", "JAVA", "JAVASCRIPT", "SCRAPYARD", "COMPUTERSCIENCE", "CODING"]
 
 # Insult Hangman Responses
 INSULTS = [
@@ -34,7 +34,7 @@ SARCASTIC_COMPLIMENTS = [
     "Finally, your brain started working.",
     "About time you got one right!",
     "I was losing hope... but here we are.",
-    "Wait, wait wait...this is a huge scientific discovery. Your brain actually works.",
+    "See? You CAN do it!",
     "One small step for you, one giant leap for intelligence."
 ]
 
@@ -75,8 +75,22 @@ def index():
                 session["attempts"] -= 1  # Wrong guess reduces attempts
                 session["wrong_streak"] += 1  # Increase wrong streak
 
+                # Program randomly guesses a letter for the user
+                available_letters = [l for l in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" if l not in guessed_letters]
+                if available_letters:
+                    random_guess = random.choice(available_letters)
+                    guessed_letters.append(random_guess)
+
+                    if random_guess in word:
+                        for i, letter in enumerate(word):
+                            if letter == random_guess:
+                                display_word[i] = random_guess  # Reveal correct letters
+                        session["message"] = "You're welcome. I guess programs are smarter than you stupid humans."
+                    else:
+                        session["message"] = "Suck it up, dumbass!"
+
                 # Rage mode if 3 wrong guesses in a row
-                if session["wrong_streak"] >= 3:
+                elif session["wrong_streak"] >= 3:
                     session["message"] = random.choice(RAGE_MODE)
                 else:
                     session["message"] = random.choice(INSULTS)  # Regular insult
