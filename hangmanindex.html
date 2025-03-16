@@ -36,6 +36,11 @@
             font-weight: bold;
             margin-top: 15px;
         }
+        .insult {
+            font-size: 1.2em;
+            color: red;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -48,8 +53,12 @@
 
         <p>Attempts Left: <strong>{{ attempts }}</strong></p>
 
+        {% if message %}
+            <p class="insult">{{ message }}</p> <!-- Displays insult or rage mode text -->
+        {% endif %}
+
         {% if game_over %}
-            <p class="message text-danger">{{ message }}</p>
+            <p class="message text-danger">{{ final_message }}</p>
             <form action="/reset-game" method="POST">
                 <button type="submit" class="btn btn-success">Play Again</button>
             </form>
