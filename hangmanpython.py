@@ -42,7 +42,7 @@ SARCASTIC_COMPLIMENTS = [
 def start_new_game():
     session["word"] = random.choice(WORDS)
     session["display_word"] = ["_" if letter.isalpha() else letter for letter in session["word"]]
-    session["attempts"] = 6
+    session["attempts"] = 10
     session["guessed_letters"] = []
     session["wrong_streak"] = 0  # Tracks consecutive wrong guesses
     session["message"] = ""
