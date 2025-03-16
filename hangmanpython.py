@@ -34,7 +34,7 @@ SARCASTIC_COMPLIMENTS = [
     "Finally, your brain started working.",
     "About time you got one right!",
     "I was losing hope... but here we are.",
-    "See? You CAN do it!",
+    "Wait, wait wait...this is a huge scientific discovery. Your brain actually works.",
     "One small step for you, one giant leap for intelligence."
 ]
 
