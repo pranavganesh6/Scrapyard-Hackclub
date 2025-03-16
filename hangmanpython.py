@@ -5,19 +5,19 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
 # List of words for the game
-WORDS = ["PYTHON", "FLASK", "DEVELOPER", "HANGMAN", "PROGRAMMING", "OPENAI", "CHALLENGE", "HACKATHON", "HACKCLUB","JAVA", "JAVASCRIPT", "SCRAPYARD", "COMPUTERSCIENCE", "CODING" ]
+WORDS = ["PYTHON", "FLASK", "DEVELOPER", "HANGMAN", "PROGRAMMING", "OPENAI", "CHALLENGE", "HACKATHON", "HACKCLUB","JAVA", "JAVASCRIPT", "SCRAPYARD", "COMPUTERSCIENCE", "CODING"]
 
 # Insult Hangman Responses
 INSULTS = [
-    "I'm losing braincells from your incomprehension",
+    "I'm losing braincells from your incomprehension.",
     "Are you trying to lose? Because it’s working!",
     "Even a braindead person is better at this.",
     "I’m starting to think you don’t know the alphabet...",
-    "Wrong again! You sure you’re not just pressing random keys?"
-    "What the f*ck are you doing?"
-    "So...there's something called common sense...are you sure you're not lacking any?"
-    "Aim for the stars so you I can watch you burn in them!"
-    "Keep yourself safe. You know what I meant."
+    "Wrong again! You sure you’re not just pressing random keys?",
+    "What the f*ck are you doing?",
+    "So...there's something called common sense...are you sure you're not lacking any?",
+    "Aim for the stars so I can watch you burn in them!",
+    "Keep yourself safe. You know what I meant.",
     "Install aimlabs IRL so you know to aim for the right key next time."
 ]
 
@@ -40,7 +40,7 @@ SARCASTIC_COMPLIMENTS = [
 
 # Function to start a new game
 def start_new_game():
-    session["word"] = random.choice(WORDS)  
+    session["word"] = random.choice(WORDS)
     session["display_word"] = ["_" if letter.isalpha() else letter for letter in session["word"]]
     session["attempts"] = 6
     session["guessed_letters"] = []
@@ -68,7 +68,7 @@ def index():
             if guess in word:
                 for i, letter in enumerate(word):
                     if letter == guess:
-                        display_word[i] = guess  
+                        display_word[i] = guess  # Reveal correct letters
                 session["message"] = random.choice(SARCASTIC_COMPLIMENTS)  # Sarcastic compliment
                 session["wrong_streak"] = 0  # Reset wrong streak
             else:
@@ -81,6 +81,7 @@ def index():
                 else:
                     session["message"] = random.choice(INSULTS)  # Regular insult
 
+        # Ensure session data is updated
         session["display_word"] = display_word
         session["guessed_letters"] = guessed_letters
 
