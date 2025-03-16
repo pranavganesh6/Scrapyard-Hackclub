@@ -1,5 +1,7 @@
 # Scrapyard-Hackclub
-The project that I did at Hackclub's Scrapyard in Silicon Valley
+The project that I did at Hackclub's Scrapyard in Silicon Valley. It's basically a Hangman game...but with a little twist...
+If you get a letter wrong, the program will automatically choose a letter for you right after to LOWER your number of attempts, making it harder for you to win the game. 
+If you get a letter right, the game will continue as normal. 
 
 # How to run the Project: 
 1) Add a "templates" folder into the file that you're running the game in (if it's not already there) and move your HTML File into it. If that's done, skip the step.
