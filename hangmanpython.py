@@ -5,25 +5,59 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
 # List of words for the game
-WORDS = ["PYTHON", "FLASK", "DEVELOPER", "HANGMAN", "PROGRAMMING", "OPENAI", "CHALLENGE", "COMPUTERSCIENCE", "CODING", "JAVA", "HTML", "COMPUTERS", "STACKOVERFLOW", "GOOGLE"]
+WORDS = ["PYTHON", "FLASK", "DEVELOPER", "HANGMAN", "PROGRAMMING", "OPENAI", "CHALLENGE", "HACKATHON", "HACKCLUB","JAVA", "JAVASCRIPT", "SCRAPYARD", "COMPUTERSCIENCE", "CODING" ]
+
+# Insult Hangman Responses
+INSULTS = [
+    "I'm losing braincells from your incomprehension",
+    "Are you trying to lose? Because it’s working!",
+    "Even a braindead person is better at this.",
+    "I’m starting to think you don’t know the alphabet...",
+    "Wrong again! You sure you’re not just pressing random keys?"
+    "What the f*ck are you doing?"
+    "So...there's something called common sense...are you sure you're not lacking any?"
+    "Aim for the stars so you I can watch you burn in them!"
+    "Keep yourself safe. You know what I meant."
+    "Install aimlabs IRL so you know to aim for the right key next time."
+]
+
+# Rage Mode Responses
+RAGE_MODE = [
+    "SERIOUSLY? YOU HAD ONE JOB!",
+    "BRO, IT'S NOT THAT HARD!",
+    "DO YOU EVEN KNOW THE ALPHABET?!",
+    "I CAN'T WATCH THIS ANYMORE!"
+]
+
+# Sarcastic Compliments for Correct Guesses
+SARCASTIC_COMPLIMENTS = [
+    "Finally, your brain started working.",
+    "About time you got one right!",
+    "I was losing hope... but here we are.",
+    "See? You CAN do it!",
+    "One small step for you, one giant leap for intelligence."
+]
 
 # Function to start a new game
 def start_new_game():
-    session.clear()  # Reset everything
-    session["word"] = random.choice(WORDS)  # Pick a new random word
-    session["display_word"] = ["_" if letter.isalpha() else letter for letter in session["word"]]  # Preserve spaces
-    session["attempts"] = 6  # Reset attempts
-    session["guessed_letters"] = []  # Reset guessed letters
+    session["word"] = random.choice(WORDS)  
+    session["display_word"] = ["_" if letter.isalpha() else letter for letter in session["word"]]
+    session["attempts"] = 6
+    session["guessed_letters"] = []
+    session["wrong_streak"] = 0  # Tracks consecutive wrong guesses
+    session["message"] = ""
+
+@app.before_request
+def ensure_new_game():
+    """ Ensures a new game starts if session is empty """
+    if "word" not in session:
+        start_new_game()
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    if "word" not in session:
-        start_new_game()  # Ensure a word exists
-
     word = session["word"]
-    display_word = session["display_word"][:]
-    guessed_letters = session["guessed_letters"][:]
-    attempts = session["attempts"]
+    display_word = session["display_word"]
+    guessed_letters = session["guessed_letters"]
 
     if request.method == "POST":
         guess = request.form.get("guess", "").upper()
@@ -34,33 +68,42 @@ def index():
             if guess in word:
                 for i, letter in enumerate(word):
                     if letter == guess:
-                        display_word[i] = guess  # Reveal correct letters
+                        display_word[i] = guess  
+                session["message"] = random.choice(SARCASTIC_COMPLIMENTS)  # Sarcastic compliment
+                session["wrong_streak"] = 0  # Reset wrong streak
             else:
-                attempts -= 1  # Reduce attempts for wrong guess
+                session["attempts"] -= 1  # Wrong guess reduces attempts
+                session["wrong_streak"] += 1  # Increase wrong streak
 
-        # Update session state
+                # Rage mode if 3 wrong guesses in a row
+                if session["wrong_streak"] >= 3:
+                    session["message"] = random.choice(RAGE_MODE)
+                else:
+                    session["message"] = random.choice(INSULTS)  # Regular insult
+
         session["display_word"] = display_word
         session["guessed_letters"] = guessed_letters
-        session["attempts"] = attempts  # Ensure attempts are saved correctly
 
     game_over = "_" not in display_word or session["attempts"] <= 0
-    message = ""
+    final_message = ""
 
     if "_" not in display_word:
-        message = "🎉 You won! The word was: " + word
+        final_message = "🎉 You won! The word was: " + word
     elif session["attempts"] <= 0:
-        message = "💀 You lost! The word was: " + word
+        final_message = "💀 You lost! The word was: " + word
 
     return render_template("hangmanindex.html",
                            display_word=" ".join(display_word),
                            attempts=session["attempts"],
                            guessed_letters=session["guessed_letters"],
                            game_over=game_over,
-                           message=message)
+                           message=session["message"],
+                           final_message=final_message)
 
-@app.route("/reset-game", methods=["POST"])
+@app.route("/reset-game", methods=["POST"])  
 def reset_game():
-    """ Resets the game when Play Again is clicked """
+    """ Route to manually reset the game """
+    session.clear()  
     start_new_game()
     return index()
 
