@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
 # List of words for the game
-WORDS = ["PYTHON", "FLASK", "DEVELOPER", "HANGMAN", "PROGRAMMING", "OPENAI", "CHALLENGE", "HACKATHON", "HACKCLUB", "JAVA", "JAVASCRIPT", "SCRAPYARD", "COMPUTERSCIENCE", "CODING"]
+WORDS = ["PYTHON", "FLASK", "DEVELOPER", "HANGMAN", "PROGRAMMING", "ARTIFICIALINTELIGENCE", "CHALLENGE", "HACKATHON", "HACKCLUB", "JAVA", "JAVASCRIPT", "SCRAPYARD", "COMPUTERSCIENCE", "CODING"]
 
 # Insult Hangman Responses
 INSULTS = [
@@ -42,7 +42,7 @@ SARCASTIC_COMPLIMENTS = [
 def start_new_game():
     session["word"] = random.choice(WORDS)
     session["display_word"] = ["_" if letter.isalpha() else letter for letter in session["word"]]
-    session["attempts"] = 10
+    session["attempts"] = 6
     session["guessed_letters"] = []
     session["wrong_streak"] = 0  # Tracks consecutive wrong guesses
     session["message"] = ""
@@ -90,7 +90,7 @@ def index():
                         session["message"] = "Suck it up, dumbass!"
 
                 # Rage mode if 3 wrong guesses in a row
-                elif session["wrong_streak"] >= 3:
+                if session["wrong_streak"] >= 3:
                     session["message"] = random.choice(RAGE_MODE)
                 else:
                     session["message"] = random.choice(INSULTS)  # Regular insult
